@@ -6,10 +6,13 @@
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
+    "deploy": "npm run generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@pinia/nuxt": "^0.7.0",
+    "@vite-pwa/nuxt": "^0.10.6",
     "nuxt": "^3.14.1592",
     "vue": "latest",
     "vue-router": "latest"
