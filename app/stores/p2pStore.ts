@@ -46,7 +46,15 @@ export const useP2pStore = defineStore('p2p', () => {
     isInitiator.value = true;
     dataChannel.value = peerConnection.value!.createDataChannel('signal');
     setupDataChannel();
-
+    dataChannel.value.onopen = async () => {
+      console.log('Data channel is open, creating an offer...');
+  
+      const offer = await peerConnection.value!.createOffer();
+      await peerConnection.value!.setLocalDescription(offer);
+  
+      // Broadcast the offer only when the data channel is ready
+      broadcastSignalingMessage({ offer });
+    };
     const offer = await peerConnection.value!.createOffer();
     await peerConnection.value!.setLocalDescription(offer);
 
@@ -76,18 +84,17 @@ export const useP2pStore = defineStore('p2p', () => {
   function setupDataChannel() {
     dataChannel.value!.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      console.log('Received data:', data);
-
+      console.log('Received signaling message:', data);
+  
       if (data.offer) handleOffer(data.offer);
       if (data.answer) handleAnswer(data.answer);
       if (data.candidate) addIceCandidate(data.candidate);
     };
-
+  
     dataChannel.value!.onopen = () => {
-      console.log('Data channel opened');
-      connectedPeers.value.push(dataChannel.value!);
+      console.log('Data channel is open');
     };
-
+  
     dataChannel.value!.onclose = () => {
       console.log('Data channel closed');
     };
