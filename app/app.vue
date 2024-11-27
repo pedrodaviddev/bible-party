@@ -1,6 +1,16 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
+const initialize = async () => {
+  await store.initializePeerConnection();
+
+  // If this device is initiating
+  const isInitiator = confirm('Are you the initiator?'); // Temporary toggle, replace with logic
+  if (isInitiator) {
+    await store.createOffer();
+  }
+};
+
 const store = useP2pStore();
 
 const offerText = ref('');
@@ -44,7 +54,16 @@ const sendMessage = () => {
       <NuxtLayout>
         <NuxtPage />
       </NuxtLayout>
-      <div style="display:flex; flex-direction: column; gap: 10px">
+
+
+      <div>
+        <h1>WebRTC Automatic P2P</h1>
+        <button @click="initialize">Start Discovery</button>
+        <p v-if="store.connectedPeers.length">Connected Peers: {{ store.connectedPeers.length }}</p>
+      </div>
+
+
+      <div v-if="false" style="display:flex; flex-direction: column; gap: 10px">
         <button @click="initConnection">Initialize Connection</button>
         <button @click="generateOffer">Generate Offer</button>
         <textarea v-model="offerText" placeholder="Offer/Answer"></textarea>
