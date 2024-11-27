@@ -2,7 +2,8 @@
 
 </script>
 <template>
-    Hola
+    <h1 v-if="$pwa?.isPWAInstalled">PWA instalada!</h1>
+    <h2 v-else>PWA no instalada</h2>
 </template>
 
 
